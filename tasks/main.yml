@@ -1,0 +1,32 @@
+---
+
+- name: install gnome shell and gnome session manager
+  become: yes
+  apt:
+    state: latest
+    pkg:
+     - gnome-session
+     - gdm3
+     - gnome-shell-extensions
+     - gnome-tweak-tool
+     - vanilla-gnome-default-settings
+     - ubuntu-gnome-wallpapers
+
+- name: active dark theme for all gtk applications
+  copy: src='settings.ini' dest='{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini'
+
+- name: active extensions alternative tab and launch new instance
+  command: gsettings set org.gnome.shell enabled-extensions "['launch-new-instance@gnome-shell-extensions.gcampax.github.com']"
+  changed_when: false
+
+- name: active week numbers in calendar applet
+  command: gsettings set org.gnome.desktop.calendar show-weekdate true
+  changed_when: false
+
+- name: switch windows instead of applications with alt + tab
+  command: gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
+  changed_when: false
+
+- name: disable switch applications with alt + tab
+  command: gsettings set org.gnome.desktop.wm.keybindings switch-applications "[]"
+  changed_when: false
