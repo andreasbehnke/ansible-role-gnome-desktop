@@ -12,21 +12,57 @@
      - vanilla-gnome-default-settings
      - ubuntu-gnome-wallpapers
 
+- name: create users
+  become: yes
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    generate_ssh_key: yes
+    skeleton: "/etc/skel"
+    shell: "/bin/bash"
+
+  loop: "{{ gnome.users }}"
+
+- name: ensure gtk config folder
+  become: yes
+  become_user: "{{ item.name }}"
+  file:
+    path: "/home/{{ item.name }}/.config/gtk-3.0"
+    state: "directory"
+  loop: "{{ gnome.users }}"
+
 - name: active dark theme for all gtk applications
-  copy: src='settings.ini' dest='{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini'
+  become: yes
+  become_user: "{{ item.name }}"
+  copy:
+    src: "settings.ini"
+    dest: "/home/{{ item.name }}/.config/gtk-3.0/settings.ini"
+  loop: "{{ gnome.users }}"
 
 - name: active extensions alternative tab and launch new instance
+  become: yes
+  become_user: "{{ item.name }}"
   command: gsettings set org.gnome.shell enabled-extensions "['launch-new-instance@gnome-shell-extensions.gcampax.github.com']"
   changed_when: false
+  loop: "{{ gnome.users }}"
 
 - name: active week numbers in calendar applet
+  become: yes
+  become_user: "{{ item.name }}"
   command: gsettings set org.gnome.desktop.calendar show-weekdate true
   changed_when: false
+  loop: "{{ gnome.users }}"
 
 - name: switch windows instead of applications with alt + tab
+  become: yes
+  become_user: "{{ item.name }}"
   command: gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
   changed_when: false
+  loop: "{{ gnome.users }}"
 
 - name: disable switch applications with alt + tab
+  become: yes
+  become_user: "{{ item.name }}"
   command: gsettings set org.gnome.desktop.wm.keybindings switch-applications "[]"
   changed_when: false
+  loop: "{{ gnome.users }}"
