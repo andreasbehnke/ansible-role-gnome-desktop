@@ -42,27 +42,27 @@
 - name: active extensions alternative tab and launch new instance
   become: yes
   become_user: "{{ item.name }}"
-  command: gsettings set org.gnome.shell enabled-extensions "['launch-new-instance@gnome-shell-extensions.gcampax.github.com']"
+  command: dbus-launch gsettings set org.gnome.shell enabled-extensions "['launch-new-instance@gnome-shell-extensions.gcampax.github.com']"
   changed_when: false
   loop: "{{ gnome.users }}"
 
 - name: active week numbers in calendar applet
   become: yes
   become_user: "{{ item.name }}"
-  command: gsettings set org.gnome.desktop.calendar show-weekdate true
+  command: dbus-launch gsettings set org.gnome.desktop.calendar show-weekdate true
   changed_when: false
   loop: "{{ gnome.users }}"
 
 - name: switch windows instead of applications with alt + tab
   become: yes
   become_user: "{{ item.name }}"
-  command: gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
+  command: dbus-launch gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
   changed_when: false
   loop: "{{ gnome.users }}"
 
 - name: disable switch applications with alt + tab
   become: yes
   become_user: "{{ item.name }}"
-  command: gsettings set org.gnome.desktop.wm.keybindings switch-applications "[]"
+  command: dbus-launch gsettings set org.gnome.desktop.wm.keybindings switch-applications "[]"
   changed_when: false
   loop: "{{ gnome.users }}"
